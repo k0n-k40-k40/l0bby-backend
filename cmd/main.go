@@ -1,32 +1,22 @@
 package main
 
 import (
-    _ "database/sql"
-    _ "encoding/json"
-    _ "fmt"
-    "log"
-    "net/http"
-    _ "strconv"
-    _ "github.com/go-sql-driver/mysql"
-    "github.com/gorilla/mux"
-)
+	"fmt"
+	"net/http"
 
-const (
-    dbDriver = "mysql"
-    dbUser   = "root"
-    dbPass   = "l0bby"
-    dbName   = "l0bby"
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
+
+	"l0bby_backend/internal/controllers/handlers"
 )
 
 func main() {
-    // Create a new router
-    r := mux.NewRouter()
+	router := chi.NewRouter()
+	router.Use(middleware.Logger)
 
-    // r.HandleFunc("/user", createUserHandler).Methods("POST")
-    // r.HandleFunc("/user/{id}", getUserHandler).Methods("GET")
-    // r.HandleFunc("/user/{id}", updateUserHandler).Methods("PUT")
-    // r.HandleFunc("/user/{id}", deleteUserHandler).Methods("DELETE")
+	router.Post("/register", handlers.UserRegister)
+	router.Post("/login", handlers.UserLogin)
 
-    log.Println("Server listening on :8090")
-    log.Fatal(http.ListenAndServe(":8090", r))
+	fmt.Println("Server is running on port 8090")
+	http.ListenAndServe(":8090", router)
 }
