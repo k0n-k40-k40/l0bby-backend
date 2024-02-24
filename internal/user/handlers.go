@@ -1,4 +1,4 @@
-package handlers
+package user
 
 import (
 	"database/sql"
@@ -6,19 +6,13 @@ import (
 	"io"
 	"net/http"
 
-	. "l0bby_backend/internal/controllers/user"
-	. "l0bby_backend/internal/models/user"
-	. "l0bby_backend/internal/utils"
+	utils "l0bby_backend/internal/utils"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const (
-	databaseSource = "root:l0bby@tcp(172.17.0.2:3306)/l0bby"
-)
-
-func UserRegister(writer http.ResponseWriter, request *http.Request) {
-	db, err := sql.Open("mysql", databaseSource)
+func HandleRegister(writer http.ResponseWriter, request *http.Request) {
+	db, err := sql.Open("mysql", utils.DatabaseSource)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -32,7 +26,7 @@ func UserRegister(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	data, err := ParseJsonBody(body)
+	data, err := utils.ParseJsonBody(body)
 	if err != nil {
 		http.Error(writer, "Failed to parse request body", http.StatusInternalServerError)
 		fmt.Println(err)
@@ -44,7 +38,7 @@ func UserRegister(writer http.ResponseWriter, request *http.Request) {
 		Email:    data["email"].(string),
 	}
 
-	err = CreateUser(db, &user)
+	err = createUser(db, &user)
 	if err != nil {
 		http.Error(writer, "Failed to create user", http.StatusInternalServerError)
 		fmt.Println(err)
@@ -55,8 +49,8 @@ func UserRegister(writer http.ResponseWriter, request *http.Request) {
 	fmt.Fprintf(writer, "User \""+user.Username+"\" created")
 }
 
-func UserLogin(writer http.ResponseWriter, request *http.Request) {
-	db, err := sql.Open("mysql", databaseSource)
+func HandleLogin(writer http.ResponseWriter, request *http.Request) {
+	db, err := sql.Open("mysql", utils.DatabaseSource)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -68,7 +62,7 @@ func UserLogin(writer http.ResponseWriter, request *http.Request) {
 		fmt.Println(err)
 	}
 
-	data, err := ParseJsonBody(body)
+	data, err := utils.ParseJsonBody(body)
 	if err != nil {
 		http.Error(writer, "Failed to parse request body", http.StatusInternalServerError)
 		fmt.Println(err)
@@ -79,7 +73,7 @@ func UserLogin(writer http.ResponseWriter, request *http.Request) {
 		Password: data["password"].(string),
 	}
 
-	err = LoginUser(db, &user)
+	err = loginUser(db, &user)
 	if err != nil {
 		http.Error(writer, "Failed to login user", http.StatusInternalServerError)
 		fmt.Println(err)
