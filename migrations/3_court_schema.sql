@@ -1,0 +1,8 @@
+CREATE TABLE courts (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    type INTEGER NOT NULL,
+    address VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    area VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    phone VARCHAR(255) NOT NULL
+);
